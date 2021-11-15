@@ -1,115 +1,101 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import Router from './src/app/nav/stack';
+import SQLite,{ SQLiteDatabase } from "react-native-sqlite-storage";
+import { useGetUser, useMigDown, useMigration } from './src/app/hooks/user';
+import { User } from './src/services/user/services';
+import Repository from './src/services/user/repo';
+import { Text } from './src/components';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const db = SQLite.openDatabase(
+  {
+      name: 'todoist',
+      location: 'default',
+  },
+  () => { },
+  error => { console.log(error) }
+);
 
-const Section: React.FC<{
-  title: string;
-}> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  useMigration(db)
+  // useMigDown(db)
+  React.useEffect(()=>{
+    // dropTable()
+    // createTable()
+    // setData(db,new User('okj','okj101'))
+    // getData()
+  },[])
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
+  const createTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql(
+            "CREATE TABLE IF NOT EXISTS "
+            + "users "
+            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT);"
+        )
+    })
+  }
+
+  const dropTable = () => {
+    db.transaction((tx) => {
+        tx.executeSql(
+            "DROP TABLE IF EXISTS "
+            + "users "
+            // + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"
+        )
+    })
+  }
+
+  const getData = () => {
+    try {
+        db.transaction((tx) => {
+          console.log('ok');
+
+          tx.executeSql(
+            
+                "SELECT * FROM users WHERE ID= ?",
+                [3],
+                (tx, results) => {
+                  console.log('ok');
+                  
+                  var len = results.rows.length;
+                    if (len > 0) {  
+                      console.log(results.rows.item(0));
+                    }
+                }
+            )
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+const setData = async (db:SQLiteDatabase,u:User) => {
+  
+      try {
+          await db.transaction(async (tx) => {
+              await tx.executeSql(
+                  "INSERT INTO users (name, password) VALUES (?,?)",
+                  [u.name, u.password]
+              );
+          })
+          console.log('set-Home');
+      } catch (error) {
+          console.log(error);
+      }
+  
+}
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+    <NavigationContainer>
+      <Router/>
+  </NavigationContainer>
+  )
+}
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
