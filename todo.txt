@@ -1,0 +1,5 @@
+1. background color change
+2. input level validation
+3. distributing logic between hook and service
+4. reset and update should reload app
+5. logger on service layer and fixing a few query
