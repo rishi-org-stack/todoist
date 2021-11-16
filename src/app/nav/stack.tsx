@@ -8,11 +8,24 @@ import Register from "../module/onboarding/register";
 import TodoList from "../module/todoList";
 import Icon from "../assets"
 import { Service } from "../../services/user/services";
+import { deleteData, MigDown, useGetUser } from "../hooks/user";
+import { openDatabase } from "react-native-sqlite-storage";
 
 
 const Drawer = createDrawerNavigator();
 
 const Stack = createStackNavigator();
+
+
+const db = openDatabase(
+  {
+      name: 'todoist',
+      location: 'default',
+  },
+  () => { },
+  error => { console.log(error) }
+);
+
 const LoginStack=()=>{
   return(
     <Stack.Navigator
@@ -68,6 +81,8 @@ const DrawNav=()=>{
 }
 
 const SideBar =(p:DrawerContentComponentProps)=>{
+  const user = useGetUser(db,1)
+
     return(
       <SafeAreaView style={{ flex: 1}}>
         <DrawerContentScrollView>
@@ -77,7 +92,7 @@ const SideBar =(p:DrawerContentComponentProps)=>{
             }}/>
   
               <Text large bold >
-                Olivia,{'\n'} Molti
+               {Object(user).name}
               </Text>
           </ViewContainer>
           <ViewContainer marginT={5} height={1} width={'90%'} style={{
@@ -102,16 +117,17 @@ const SideBar =(p:DrawerContentComponentProps)=>{
   
             <DrawerItem 
               label={'Reset'} onPress={function (): void {
-                //implement later
+                  MigDown(db)
               }}
               icon={
                 (p)=><Icon.Reset height={20} width={20}/>
               }
+          
             />
         </DrawerContentScrollView>
         <DrawerItem 
           label={'SignOut'} onPress={function (): void {
-            throw new Error('Function not implemented.');
+            deleteData(db,1)
           }}
             icon={
               ()=>
@@ -123,8 +139,11 @@ const SideBar =(p:DrawerContentComponentProps)=>{
   }
 
 const Router =()=>{
+  const user = useGetUser(db,1)
     return(
+        user=== undefined?
         <RegisterStack/>
+        :<LoginStack/>
     )
 }
 export default Router;

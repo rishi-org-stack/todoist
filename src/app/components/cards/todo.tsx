@@ -1,8 +1,9 @@
 import React, { ReactElement } from 'react'
-import { Text, ViewContainer } from '../../../components'
+import { Text, TouchableContainer, ViewContainer } from '../../../components'
 
 interface Props {
-    
+    // group?:string;
+
 }
 
 function TodoCard({}: Props): ReactElement {
@@ -10,7 +11,7 @@ function TodoCard({}: Props): ReactElement {
         <ViewContainer width={'90%'} alignItems='center' borderRadius={10} row style={{
             backgroundColor:"red",
         }}>
-            <ViewContainer 
+            <TouchableContainer 
                 height={30} 
                 width={30} 
                 marginT={20}
@@ -22,7 +23,7 @@ function TodoCard({}: Props): ReactElement {
                 borderC='green'
                 >
 
-            </ViewContainer>
+            </TouchableContainer>
             <ViewContainer flex={1} >
                 <Text>
                     Daily tasks

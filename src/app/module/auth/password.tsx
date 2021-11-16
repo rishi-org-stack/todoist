@@ -1,14 +1,42 @@
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { ReactElement } from 'react'
+import { openDatabase } from 'react-native-sqlite-storage'
 import { Input, TouchableContainer, ViewContainer } from '../../../components'
 import { en } from '../../../lang/en'
 import Icon from "../../assets"
+import { useGetUser } from '../../hooks/user'
 
 interface Props {
     navigation: StackNavigationProp<any,any>
 }
 
+const db = openDatabase(
+    {
+        name: 'todoist',
+        location: 'default',
+    },
+    () => { },
+    error => { console.log(error) }
+  );
+
 function Password({navigation}: Props): ReactElement {
+    const user = useGetUser(db,1)
+    const [password, setpassword] = React.useState('')
+
+    const changePassword=(text:string)=>{
+        setpassword(text)
+    }
+    const handleSubmission=()=>{
+
+        if (password===Object(user)['password']){
+            console.log('matched');
+            navigation.navigate('Drawer')
+            
+        }else{
+            console.log('unauthorized');
+            
+        }
+    }
     return (
         <ViewContainer flex={1} center>
             <Input 
@@ -23,6 +51,7 @@ function Password({navigation}: Props): ReactElement {
                 LeftComponent={
                     <Icon.Password height={20}
                 />}
+                OnChangeText={text=>changePassword(text)}
             />
             <TouchableContainer 
                 height={35}
@@ -36,9 +65,7 @@ function Password({navigation}: Props): ReactElement {
                 rightComponent={
                     <Icon.Right height={15}/>
                 }
-                Onpress={()=>{
-                    navigation.navigate('Drawer')
-                }}
+                Onpress={()=>handleSubmission()}
             >
                 {en.next}
             </TouchableContainer>

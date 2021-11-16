@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react'
 import { Text, TextInput, TouchableOpacity } from "react-native";
 
 interface TProps {
-    OnChangeText?: ()=>void;
+    OnChangeText?: (text:string)=>void;
     rightComponent?:React.ReactNode;
     LeftComponent?:React.ReactNode;
     placeholder?:string;
@@ -18,7 +18,7 @@ function Input(p: TouchProps): ReactElement {
                     {p.LeftComponent}
                 </Container> 
                 <Container flex={1}>
-                    <TextInput placeholder={p.placeholder} />
+                    <TextInput placeholder={p.placeholder} onChangeText={p.OnChangeText}/>
                 </Container>
                 <Container center flex={0.1} height={'100%'} >
                     {p.rightComponent}

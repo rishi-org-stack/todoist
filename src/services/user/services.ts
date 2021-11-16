@@ -23,12 +23,22 @@ class User {
 
 class Todo {
     public head!:string
-    public category!:string
+    public group!:string
     public completed!:number
     constructor(head: string, completed: number, category: string) {
         this.head=head
         this.completed=completed
-        this.category=category
+        this.group=category
+    }
+}
+class Group {
+    public name!:string;
+    public totalTodos!:number
+    public todos!:Todo[]|any[]
+    constructor(name: string) {
+        this.name=name
+        this.totalTodos=0
+        this.todos=[]
     }
 }
 export type {
@@ -38,7 +48,7 @@ export type {
 
 export{
     User,
-    Todo
+    Todo,Group
 
 }
 

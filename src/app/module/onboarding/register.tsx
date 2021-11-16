@@ -4,9 +4,10 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { Use } from 'react-native-svg';
 import { ViewContainer,Text, Input, TouchableContainer } from '../../../components';
 import { en } from '../../../lang/en';
-import { Todo, User } from '../../../services/user/services';
+import { Group, Todo, User } from '../../../services/user/services';
 import UserService from '../../../services/user/user';
 import Icon from "../../assets";
+import { setGroup, useGetGroups } from '../../hooks/category';
 import { setTodo, useGetTodos } from '../../hooks/task';
 import { deleteData, setData, useGetConnection, useGetUser } from '../../hooks/user';
 
@@ -24,7 +25,22 @@ const db = openDatabase(
   );
   
 function Register(p: Props): ReactElement {
-    const user=useGetTodos(db,'cat')
+    const [name, setname] = React.useState('')
+    const [password, setpassword] = React.useState('')
+    const user = useGetGroups(db)
+
+    const changeName=(text:string)=>{
+        setname(text)
+    }
+
+    const changePassword=(text:string)=>{
+        setpassword(text)
+    }
+    const handleSubmission=()=>{
+        setData(db,new User(name,password))
+        p.navigation.navigate('Drawer')
+
+    }
     return (
         <ViewContainer flex={1} >
             <ViewContainer flex={1}>
@@ -50,6 +66,8 @@ function Register(p: Props): ReactElement {
                     LeftComponent={
                         <Icon.User height={20}
                         />}
+                    OnChangeText={(text:string)=>changeName(text)}
+                    
                     />
                     <Input 
                         placeholder={en.password} 
@@ -64,10 +82,12 @@ function Register(p: Props): ReactElement {
                         LeftComponent={
                         <Icon.Password height={20}
                         />}
+
+                        OnChangeText={(text:string)=>changePassword(text)}
                     />
                 </ViewContainer>
                 <ViewContainer flex={1}>
-                <TouchableContainer height={30} width={80} style={{
+                <TouchableContainer centerMain height={30} width={80} style={{
                         backgroundColor:'red'
                     }}
                     rightComponent={
@@ -75,9 +95,8 @@ function Register(p: Props): ReactElement {
                     }
                     borderRadius={10}
                     Onpress={()=>{
-                        // setTodo(db,new Todo('head2',0,'cat'))
-                        console.log(user);
                         
+                        handleSubmission()
                     }}
                     >
                         {en.next}

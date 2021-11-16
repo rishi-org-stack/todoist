@@ -3,10 +3,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import Router from './src/app/nav/stack';
 import SQLite,{ SQLiteDatabase } from "react-native-sqlite-storage";
-import { useGetUser, useMigDown, useMigration } from './src/app/hooks/user';
+import {useMigration } from './src/app/hooks/user';
 import { User } from './src/services/user/services';
-import Repository from './src/services/user/repo';
-import { Text } from './src/components';
 
 const db = SQLite.openDatabase(
   {
@@ -21,75 +19,67 @@ const db = SQLite.openDatabase(
 const App = () => {
   useMigration(db)
   // useMigDown(db)
-  React.useEffect(()=>{
-    // dropTable()
-    // createTable()
-    // setData(db,new User('okj','okj101'))
-    // getData()
-  },[])
+//   const createTable = () => {
+//     db.transaction((tx) => {
+//         tx.executeSql(
+//             "CREATE TABLE IF NOT EXISTS "
+//             + "users "
+//             + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT);"
+//         )
+//     })
+//   }
 
+//   const dropTable = () => {
+//     db.transaction((tx) => {
+//         tx.executeSql(
+//             "DROP TABLE IF EXISTS "
+//             + "users "
+//             // + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"
+//         )
+//     })
+//   }
 
-  const createTable = () => {
-    db.transaction((tx) => {
-        tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS "
-            + "users "
-            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT);"
-        )
-    })
-  }
+//   const getData = () => {
+//     try {
+//         db.transaction((tx) => {
+//           console.log('ok');
 
-  const dropTable = () => {
-    db.transaction((tx) => {
-        tx.executeSql(
-            "DROP TABLE IF EXISTS "
-            + "users "
-            // + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"
-        )
-    })
-  }
-
-  const getData = () => {
-    try {
-        db.transaction((tx) => {
-          console.log('ok');
-
-          tx.executeSql(
+//           tx.executeSql(
             
-                "SELECT * FROM users WHERE ID= ?",
-                [3],
-                (tx, results) => {
-                  console.log('ok');
+//                 "SELECT * FROM users WHERE ID= ?",
+//                 [3],
+//                 (tx, results) => {
+//                   console.log('ok');
                   
-                  var len = results.rows.length;
-                    if (len > 0) {  
-                      console.log(results.rows.item(0));
-                    }
-                }
-            )
-        })
-    } catch (error) {
-        console.log(error);
-    }
-}
+//                   var len = results.rows.length;
+//                     if (len > 0) {  
+//                       console.log(results.rows.item(0));
+//                     }
+//                 }
+//             )
+//         })
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 
 
-const setData = async (db:SQLiteDatabase,u:User) => {
+// const setData = async (db:SQLiteDatabase,u:User) => {
   
-      try {
-          await db.transaction(async (tx) => {
-              await tx.executeSql(
-                  "INSERT INTO users (name, password) VALUES (?,?)",
-                  [u.name, u.password]
-              );
-          })
-          console.log('set-Home');
-      } catch (error) {
-          console.log(error);
-      }
+//       try {
+//           await db.transaction(async (tx) => {
+//               await tx.executeSql(
+//                   "INSERT INTO users (name, password) VALUES (?,?)",
+//                   [u.name, u.password]
+//               );
+//           })
+//           console.log('set-Home');
+//       } catch (error) {
+//           console.log(error);
+//       }
   
-}
+// }
   return (
     <NavigationContainer>
       <Router/>

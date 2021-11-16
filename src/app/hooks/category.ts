@@ -1,15 +1,14 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { SQLiteDatabase } from "react-native-sqlite-storage";
-import { Todo, User } from "../../services/user/services";
+import { Group } from "../../services/user/services";
 
-const setTodo = async (db:SQLiteDatabase,u:Todo) => {
+const setGroup = async (db:SQLiteDatabase,u:Group) => {
   
     try {
         await db.transaction(async (tx) => {
             await tx.executeSql(
-                "INSERT INTO todos (head, completed, group_name) VALUES (?)",
-                [u.head,0,u.group]
+                "INSERT INTO groups (name,total_todos) VALUES (?,?)",
+                [u.name,u.totalTodos]
             );
         })
         console.log('set-Home');
@@ -19,12 +18,12 @@ const setTodo = async (db:SQLiteDatabase,u:Todo) => {
   
   }
   
-  const deleteTodo = async (db:SQLiteDatabase,id:number) => {
+  const deleteGroup= async (db:SQLiteDatabase,id:number) => {
     
     try {
         await db.transaction(async (tx) => {
             await tx.executeSql(
-                "DELETE FROM todos WHERE ID=?;",
+                "DELETE FROM groups WHERE ID=?;",
                 [id]
             );
         })
@@ -34,20 +33,20 @@ const setTodo = async (db:SQLiteDatabase,u:Todo) => {
     }
   }
   
-function useGetTodos(db:SQLiteDatabase,category :string) {
-    const [user, setuser] = useState<any[]>([])
+function useGetGroups(db:SQLiteDatabase) {
+    const [groups, setgroups] = useState<any[]>([])
       const getData = () => {
         try {
             db.transaction((tx) => {
               tx.executeSql(
-                    "SELECT * FROM todos WHERE group_name=?",
-                    [category],
+                    "SELECT * FROM groups",
+                    [],
                     (tx, results) => {
                       console.log('ok');
                       
                       var len = results.rows.length;
                         if (len > 0) {
-                            setuser(results.rows.raw())
+                            setgroups(results.rows.raw())
                         }
                     }
                 )
@@ -59,9 +58,11 @@ function useGetTodos(db:SQLiteDatabase,category :string) {
     React.useEffect(()=>{
       getData()
     },[])
-      return user
+      return groups
   }
   
 export {
-    useGetTodos,setTodo,deleteTodo
-}
+    useGetGroups,setGroup,deleteGroup}
+
+
+

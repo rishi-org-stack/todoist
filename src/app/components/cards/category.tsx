@@ -1,28 +1,34 @@
 import React, { ReactElement } from 'react'
-import { Text, ViewContainer } from '../../../components'
+import { Text, TouchableContainer, ViewContainer } from '../../../components'
 
 interface Props {
-    
+    tasks?:number,
+    category?:string
+    onPressCard?:(ok:string)=>void
 }
 
-function Category({}: Props): ReactElement {
+function Category(p: Props): ReactElement {
     return (
-        <ViewContainer height={100} width={180} borderRadius={15} style={{
-            backgroundColor:"green"
-        }}>
+        <TouchableContainer height={100} width={180} borderRadius={15} style={{
+            backgroundColor:"green",
+            justifyContent:'flex-start'
+        }} 
+            Onpress={()=>p.onPressCard}
+        >
+            
             <ViewContainer flex={1}  marginL={15} alignItems='flex-start' style={{
-                justifyContent:'center'
+                // justifyContent:'center'
             }}>
                 <Text>
-                    40 tasks
+                    {p.tasks==undefined ? 0 :p.tasks.toString()+"\t\t"} todos
                 </Text>
             </ViewContainer>
             <ViewContainer flex={3} marginL={15}>
                 <Text medium>
-                    Buisness
+                    {p.category}
                 </Text>
             </ViewContainer>
-        </ViewContainer>
+        </TouchableContainer>
     )
 }
 

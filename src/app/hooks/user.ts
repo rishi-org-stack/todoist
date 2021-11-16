@@ -23,15 +23,18 @@ function useMigration(db :SQLiteDatabase){
         tx.executeSql(
             "CREATE TABLE IF NOT EXISTS "
             + "users "
-            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, password TEXT);"
+            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NT NULL, password TEXT NOT NULL);"
           )
-      })
-
-      db.transaction((tx) => {
+      
         tx.executeSql(
             "CREATE TABLE IF NOT EXISTS "
             + "todos "
-            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, head TEXT, completed INTEGER, category INTEGER);"
+            + `(ID INTEGER PRIMARY KEY AUTOINCREMENT, head  TEXT NOT NULL, completed INTEGER, group_name TEXT);`
+          )
+          tx.executeSql(
+            "CREATE TABLE IF NOT EXISTS "
+            + "groups "
+            + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, total_todos INTEGER );"
           )
       })
   }
@@ -41,8 +44,8 @@ function useMigration(db :SQLiteDatabase){
     },[])
 }
 
-function useMigDown(db:SQLiteDatabase){
-  const dropTable = () => {
+function MigDown(db:SQLiteDatabase){
+  // const dropTable = () => {
     db.transaction((tx) => {
         tx.executeSql(
             "DROP  TABLE IF EXISTS users "
@@ -51,11 +54,14 @@ function useMigDown(db:SQLiteDatabase){
         tx.executeSql(
           "DROP  TABLE IF EXISTS todos "
       )
+      tx.executeSql(
+        "DROP  TABLE IF EXISTS groups "
+    )
     })
-  }
-  React.useEffect(()=>{
-    dropTable()
-  },[])
+  // }
+  // React.useEffect(()=>{
+  //   dropTable()
+  // },[])
 }
 
 
@@ -126,7 +132,7 @@ function useGetUser(db:SQLiteDatabase,id :number) {
 export{
     useGetConnection,
     useMigration,
-    useMigDown,
+    MigDown,
     useGetUser,
     setData,
     deleteData

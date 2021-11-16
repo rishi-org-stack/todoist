@@ -5,6 +5,7 @@ import { Text, TouchableOpacity } from "react-native";
 
 interface TProps {
     Onpress?: ()=>void;
+    centerMain?:boolean
     rightComponent?:React.ReactNode;
     LeftComponent?:React.ReactNode;
     children?:React.ReactNode | string;
@@ -69,7 +70,7 @@ function TouchableContainer(p: TouchProps): ReactElement {
                    { p.LeftComponent}
                 </Container>
             }
-            <Container flex={2} center>
+            <Container flex={2} center={p.centerMain}>
             {
                 typeof p.children ===  'string'?
                 <Text style={{
